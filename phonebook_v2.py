@@ -1,3 +1,5 @@
+# You will write a command line program to manage a phone book. Only this time, using a PostgreSQL database to store the information instead of a dictionary and then persisting to files. You will use the PyGreSQL module to connect to a PostgresSQL database.
+
 import pg
 
 db = pg.DB(dbname='phonebook_v2')
@@ -17,7 +19,7 @@ while True:
         result_list = query.namedresult()
         for result in result_list:
             if name == result.name:
-                query = db.query('select * from phonebook where name = name')
+                query = db.query('select name as "Name", phone_number as "Phone", email as "Email" from phonebook where name = name')
                 print query
             else:
                 print "Entry for %s not found." % name
@@ -44,12 +46,23 @@ while True:
     #Deletes an entry
     def delete_entry():
         print "Please enter a name to delete from the phonebook."
-        name = raw_input("Name: ").lower()
-        if name in phonebook_dict:
-            del phonebook_dict[name]
-            print "Deleted entry for %s" % name
-        else:
-            print "%s not found." % name
+        name = raw_input("Name: ")
+        query = db.query('select id, name from phonebook')
+        result_list = query.namedresult()
+        for result in result_list:
+            if name == result.name:
+                db.delete('phonebook', {'id': result.id})
+                print "Entry for %s deleted." % name
+            else:
+                print "%s is not found." % name
+
+
+
+        # if name in phonebook_dict:
+        #     del phonebook_dict[name]
+        #     print "Deleted entry for %s" % name
+        # else:
+        #     print "%s not found." % name
 
     #Lists all entries
     def list_entries():
