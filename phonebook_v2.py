@@ -8,40 +8,38 @@ db = pg.DB(dbname='phonebook_v2')
 while True:
     #Looks up an entry
     def look_up():
-        name = raw_input("Name? ")
-        query = db.query('select name from phonebook')
-        result_list = query.namedresult()
-        for result in result_list:
-            if name == result.name:
-                query = db.query('select name as "Name", phone_number as "Phone", email as "Email" from phonebook where name = name')
-                print query
-            else:
-                print "Entry for %s not found." % name
+        name = raw_input("Name? ").lower().title()
+        result_list = db.query("select * from phonebook where name ilike '%s'" % name).namedresult()
+        if len(result_list) > 0:
+            for result in result_list:
+                print "%s's phone number: %s and email: %s" % (result.name, result.phone_number, result.email)
+        else:
+            print "%s is not found." % name
 
     #Sets an entry
     def set_entry():
-        print "Please add infromation to create a new entry:"
-        name = raw_input("Name: ")
-        query = db.query('select name from phonebook')
-        result_list = query.namedresult()
-        for result in result_list:
-            if result.name != name:
-                phone_number = raw_input("Phone Number: ")
-                email = raw_input("Email: ")
-
-                db.insert('phonebook',
-                name = name,
-                phone_number = phone_number,
-                email = email)
-                print "Entry stored for %s" % name
-            else:
-                print "%s is already in the database." % name
+        name = raw_input('Name? ').lower()
+        number = raw_input('Number? ')
+        email = raw_input('Email? ')
+        result_list = db.query("select id from phonebook where name ilike '%s'" % name).namedresult()
+        if len(result_list) > 0:
+            id = result_list[0].id
+            db.update('phonebook', {
+                'id': id,
+                'name': name,
+                'phone_number': number,
+                'email': email
+            })
+            print 'Updated entry for %s' % name
+        else:
+            db.insert('phonebook', name=name, phone_number=number, email=email)
+            print 'Added entry for %s' % name
 
 
     #Deletes an entry
     def delete_entry():
         print "Please enter a name to delete from the phonebook."
-        name = raw_input("Name: ")
+        name = raw_input("Name: ").lower().title()
         query = db.query('select id, name from phonebook')
         result_list = query.namedresult()
         for result in result_list:
@@ -63,11 +61,11 @@ while True:
     Electronic Phone Book
     =====================
 
-    1\. Look up an entry
-    2\. Set an entry
-    3\. Delete an entry
-    4\. List all entries
-    5\. Quit
+    1. Look up an entry
+    2. Set an entry
+    3. Delete an entry
+    4. List all entries
+    5. Quit
     """
 
     menu_number = int(raw_input("What do you want to do (1-5)? "))
@@ -84,4 +82,4 @@ while True:
         print "Goodbye!"
         break
     elif menu_number > 5:
-        print "Invalid option. Please enter a valid option (1-6)."
+        print "Invalid option. Please enter a valid option (1-5)."
