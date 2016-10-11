@@ -30,12 +30,10 @@ while True:
         phone = raw_input("Phone Number: ")
         email = raw_input("Email: ")
 
-        db.query("""
-        update phonebook set
-            name = %s,
-            phone = %s,
-            email = %s
-        """, (name, phone, email))
+        db.insert('phonebook_v2',
+        name = name,
+        phone = phone,
+        email = email)
         print "Entry stored for %s" % name
 
 
