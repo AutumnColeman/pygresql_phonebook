@@ -13,15 +13,14 @@ while True:
     #Looks up an entry
     def look_up():
         name = raw_input("Name? ")
-        if name in phonebook_dict:
-            info_dict = phonebook_dict[name]
-            print "Found entry for %s: " % (name)
-            print "Cell Phone Number: %s" % (info_dict["Cell"])
-            print "Home Phone Number: %s" % (info_dict["Home"])
-            print "Work Phone Number: %s" % (info_dict["Work"])
-
-        else:
-            print "Entry for %s not found." % name
+        query = db.query('select name from phonebook')
+        result_list = query.namedresult()
+        for result in result_list:
+            if name == result.name:
+                query = db.query('select * from phonebook where name = name')
+                print query
+            else:
+                print "Entry for %s not found." % name
 
     #Sets an entry
     def set_entry():
