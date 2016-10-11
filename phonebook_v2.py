@@ -5,12 +5,6 @@ import pg
 db = pg.DB(dbname='phonebook_v2')
 
 
-# if exists('phonebook_v2.sql'):
-#     print "Loading phonebook"
-#
-# else:
-#     phonebook_dict = {}
-
 while True:
     #Looks up an entry
     def look_up():
@@ -26,14 +20,12 @@ while True:
 
     #Sets an entry
     def set_entry():
-        print "Please add the name and number to create a new entry:"
+        print "Please add infromation to create a new entry:"
         name = raw_input("Name: ")
         query = db.query('select name from phonebook')
         result_list = query.namedresult()
         for result in result_list:
-            if name == result.name:
-                print "That name is already in the database."
-            else:
+            if result.name != name:
                 phone_number = raw_input("Phone Number: ")
                 email = raw_input("Email: ")
 
@@ -42,6 +34,9 @@ while True:
                 phone_number = phone_number,
                 email = email)
                 print "Entry stored for %s" % name
+            else:
+                print "%s is already in the database." % name
+
 
     #Deletes an entry
     def delete_entry():
@@ -56,13 +51,6 @@ while True:
             else:
                 print "%s is not found." % name
 
-
-
-        # if name in phonebook_dict:
-        #     del phonebook_dict[name]
-        #     print "Deleted entry for %s" % name
-        # else:
-        #     print "%s not found." % name
 
     #Lists all entries
     def list_entries():
