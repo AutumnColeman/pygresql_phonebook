@@ -27,10 +27,10 @@ while True:
     def set_entry():
         print "Please add the name and number to create a new entry:"
         name = raw_input("Name: ")
-        phone = raw_input("Phone Number: ")
+        phone_number = raw_input("Phone Number: ")
         email = raw_input("Email: ")
 
-        db.insert('phonebook_v2',
+        db.insert('phonebook',
         name = name,
         phone = phone,
         email = email)
